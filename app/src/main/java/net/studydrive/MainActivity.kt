@@ -2,6 +2,7 @@ package net.studydrive
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Layout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import androidx.lifecycle.MutableLiveData
@@ -19,8 +20,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        counterLiveData.value = 10
-        itemListLiveData.value = List(10) { ItemModel("", 1) }
+        counterLiveData.value = 1
+        itemListLiveData.value = List(1) { ItemModel("", 1) }
 
         val counterContext = newSingleThreadContext("CounterContext")
 
@@ -40,20 +41,22 @@ class MainActivity : AppCompatActivity() {
         mAdapter = ItemAdapter(this@MainActivity, listOf())
         recyclerview.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
+            (layoutManager as LinearLayoutManager).reverseLayout = true
             adapter = mAdapter
         }
+
 
         observe(itemListLiveData) {
             it ?: return@observe
             mAdapter.items = it
+            recyclerview.smoothScrollToPosition(mAdapter.itemCount-1)
 
         }
-
 
     }
 
 
-    fun addJob(thread: ExecutorCoroutineDispatcher) {
+    private fun addJob(thread: ExecutorCoroutineDispatcher) {
         GlobalScope.launch {
             withContext(Dispatchers.Default) {
                 repeat(200) {
@@ -72,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun consumerJob(thread: ExecutorCoroutineDispatcher) {
+    private fun consumerJob(thread: ExecutorCoroutineDispatcher) {
         GlobalScope.launch {
             withContext(Dispatchers.Default) {
                 repeat(200) {
