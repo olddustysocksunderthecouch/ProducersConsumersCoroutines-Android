@@ -2,13 +2,13 @@ package net.studydrive
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
-import kotlin.coroutines.coroutineContext
+
 
 class MainActivity : AppCompatActivity() {
 
-    var counter = 10;
+    var counter = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,20 +16,46 @@ class MainActivity : AppCompatActivity() {
 
 
         val counterContext = newSingleThreadContext("CounterContext")
-        var counter = 0
 
-        fun main() = launch {
-            withContext(Dispatchers.Default) {
-                massiveRun {
-                    // confine each increment to a single-threaded context
-                    withContext(counterContext) {
-                        counter++
-                    }
-                }
-            }
-            println("Counter = $counter")
+        producer_button.setOnClickListener {
+            addJob(counterContext)
         }
 
+        consumer_button.setOnClickListener {
+            consumerJob(counterContext)
+        }
+
+    }
+
+    data class Ball(var hits: Int)
+
+
+    fun addJob(thread: ExecutorCoroutineDispatcher) {
+        GlobalScope.launch {
+            withContext(Dispatchers.Default) {
+                repeat(200) {
+                    withContext(thread) {
+                            println("Counter = $counter")
+                            counter++
+                        }
+                    delay(4000)
+                }
+            }
+        }
+    }
+
+    fun consumerJob(thread: ExecutorCoroutineDispatcher) {
+        GlobalScope.launch {
+            withContext(Dispatchers.Default) {
+                repeat(200) {
+                    withContext(thread) {
+                        println("Counter = $counter")
+                        counter--
+                    }
+                    delay(3000)
+                }
+            }
+        }
     }
 
 }
