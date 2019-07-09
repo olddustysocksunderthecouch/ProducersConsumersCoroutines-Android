@@ -5,16 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.lets.address.R
-import com.lets.address.data.entities.Location
-import com.lets.address.utility.utils.DateConverter
-import kotlinx.android.synthetic.main.holder_location.view.*
+import kotlinx.android.synthetic.main.holder_item.view.*
 
-class EventsAdapter(
+class ItemAdapter(
         val context: Context,
         items: List<ItemModel>
 
-) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
     var items: List<ItemModel> = items
         set(value) {
@@ -23,7 +20,7 @@ class EventsAdapter(
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-            ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_location, parent, false))
+            ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_item, parent, false))
 
     override fun getItemCount(): Int = items.size
 
@@ -32,11 +29,10 @@ class EventsAdapter(
     inner class ViewHolder(itemView: View) : BaseViewHolder(itemView) {
 
         override fun bind() {
-            val location = locations[adapterPosition]
+            val itemModel = items[adapterPosition]
             itemView.apply {
-                val geofenceEvent = "${renameEventType(location.eventType)} ${location.geofenceTriggered}"
-                tvTime.text = DateConverter.readableDate(location.geofenceTime)
-                tvGeofenceData.text = geofenceEvent
+                item_count_textview.text = itemModel.count.toString()
+                item_time_textview.text = "time"
             }
         }
     }

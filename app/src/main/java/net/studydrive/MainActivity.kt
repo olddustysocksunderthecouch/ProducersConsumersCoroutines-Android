@@ -5,13 +5,14 @@ import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import androidx.lifecycle.MutableLiveData
-
+import androidx.recyclerview.widget.LinearLayoutManager
 
 
 class MainActivity : AppCompatActivity() {
 
     var counter = 10
     private val counterLiveData: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    private lateinit var mAdapter: ItemAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +34,19 @@ class MainActivity : AppCompatActivity() {
             it ?: return@observeMutable
             counter_textview.text = it.toString()
         }
+
+        mAdapter = ItemAdapter(this@MainActivity, listOf())
+        recyclerview.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = mAdapter
+        }
+
+        observe(counterLiveData) {
+            it ?: return@observe
+            mAdapter.items = it
+
+        }
+
 
     }
 
