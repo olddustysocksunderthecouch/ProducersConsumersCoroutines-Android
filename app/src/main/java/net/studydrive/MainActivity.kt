@@ -4,16 +4,20 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
+import androidx.lifecycle.MutableLiveData
+
 
 
 class MainActivity : AppCompatActivity() {
 
     var counter = 10
+    private val counterLiveData: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        counterLiveData.value = 10
 
         val counterContext = newSingleThreadContext("CounterContext")
 
@@ -25,9 +29,12 @@ class MainActivity : AppCompatActivity() {
             consumerJob(counterContext)
         }
 
-    }
+        observeMutable(counterLiveData){
+            it ?: return@observeMutable
+            counter_textview.text = it.toString()
+        }
 
-    data class Ball(var hits: Int)
+    }
 
 
     fun addJob(thread: ExecutorCoroutineDispatcher) {
@@ -36,6 +43,9 @@ class MainActivity : AppCompatActivity() {
                 repeat(200) {
                     withContext(thread) {
                             println("Counter = $counter")
+                        withContext(Dispatchers.Main) {
+                            counterLiveData.value = counter
+                        }
                             counter++
                         }
                     delay(4000)
@@ -50,6 +60,10 @@ class MainActivity : AppCompatActivity() {
                 repeat(200) {
                     withContext(thread) {
                         println("Counter = $counter")
+                        withContext(Dispatchers.Main) {
+                            counterLiveData.value = counter
+                        }
+
                         counter--
                     }
                     delay(3000)
