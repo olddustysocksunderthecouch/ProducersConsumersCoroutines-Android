@@ -12,6 +12,7 @@ class MainActivity : AppCompatActivity() {
 
     var counter = 10
     private val counterLiveData: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    private val itemListLiveData: MutableLiveData<List<ItemModel>> = MutableLiveData()
     private lateinit var mAdapter: ItemAdapter
 
 
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         counterLiveData.value = 10
+        itemListLiveData.value = List(10) { ItemModel("", 1) }
 
         val counterContext = newSingleThreadContext("CounterContext")
 
@@ -41,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             adapter = mAdapter
         }
 
-        observe(counterLiveData) {
+        observe(itemListLiveData) {
             it ?: return@observe
             mAdapter.items = it
 
@@ -59,6 +61,8 @@ class MainActivity : AppCompatActivity() {
                             println("Counter = $counter")
                         withContext(Dispatchers.Main) {
                             counterLiveData.value = counter
+                            val itemList = itemListLiveData.value
+                            itemListLiveData.value = itemList?.plus( ItemModel("", counter))
                         }
                             counter++
                         }
@@ -76,6 +80,8 @@ class MainActivity : AppCompatActivity() {
                         println("Counter = $counter")
                         withContext(Dispatchers.Main) {
                             counterLiveData.value = counter
+                            val itemList = itemListLiveData.value
+                            itemListLiveData.value = itemList?.subList(0, itemList.size.minus(1))
                         }
 
                         counter--
