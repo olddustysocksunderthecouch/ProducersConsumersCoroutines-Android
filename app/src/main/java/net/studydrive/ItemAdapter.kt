@@ -1,17 +1,12 @@
 package net.studydrive
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.holder_item.view.*
 
-class ItemAdapter(
-        val context: Context,
-        items: List<ItemModel>
-
-) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+class ItemAdapter(items: List<ItemModel>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
     var items: List<ItemModel> = items
         set(value) {
@@ -32,10 +27,9 @@ class ItemAdapter(
             val itemModel = items[adapterPosition]
             itemView.apply {
                 item_count_textview.text = itemModel.count.toString()
-                item_time_textview.text = "time"
+                item_time_textview.text = itemModel.time
             }
         }
     }
-
 
 }
